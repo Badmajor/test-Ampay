@@ -1,0 +1,13 @@
+FROM python:3.9
+
+COPY requirements.txt /app/
+
+RUN pip install -U pip
+RUN pip install -r requirements.txt
+
+COPY .env /app/
+RUN cat /app/.env | xargs -0 env
+
+COPY . /app/
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "ampay.wsgi:application"]

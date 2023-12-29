@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ item.name }}
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div>
+      <div>
+        <h1>{{ item.name }}</h1>
+        <h2>
+          Описание: {{ item.description }}
+          <br>
+          <small>Цена: {{ item.price }}</small>
+        </h2>
+      </div>
+          <button onclick="buyItem({{ item.id }})">Buy</button>
+    </div>
+  </div>
+  <script>
+    function buyItem(itemId) {
+      fetch(`/buy/${itemId}/`, {
+        method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Инициализируем Stripe
+          const stripe = Stripe('pk_test_51OSOBqAjZUGXp4YZoQ2PljOhmOI6RE03uXPxDFwMZ0RSPesTKW8qjsPlqUoZSviV9p6xQKR4eWNNP69woR9W03lB00aLcvlPuf');
+
+          // Выполняем редирект на Checkout форму Stripe
+          stripe.redirectToCheckout({ sessionId: data.session_id });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+  </script>
+{% endblock %}
